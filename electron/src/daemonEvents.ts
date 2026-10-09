@@ -23,7 +23,12 @@ export type DaemonEventType =
   | 'expr-uploaded'
   | 'expr-failed'
   | 'expr-selected'
-  | 'expr-deleted';
+  | 'expr-deleted'
+  | 'hook-status'
+  | 'boot-progress'
+  | 'boot-failed'
+  | 'boot-uploaded'
+  | 'boot-playing';
 
 export interface DaemonEvent {
   type: DaemonEventType;
@@ -69,15 +74,19 @@ export interface DaemonEvent {
   failed?: string[];
   rejected?: string[];
   error?: string;
-  /** Present on the device-config frame. */
+  // device-config
   pushed?: boolean;
+  brightness?: number;
+  speed?: number;
+  rotation?: number;
+  idle_s?: number;
+
+  // hook-status
+  repaired?: boolean;
+  changed?: boolean;
+
+  // boot-*
+  files?: string[] | Array<{ name: string; bytes: number }>;
+  error?: string;
 }
 
-/** The frames the expression editor cares about; App consumes the rest. */
-export const EXPR_EVENT_TYPES: DaemonEventType[] = [
-  'expr-progress',
-  'expr-uploaded',
-  'expr-failed',
-  'expr-selected',
-  'expr-deleted',
-];

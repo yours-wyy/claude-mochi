@@ -1,5 +1,0 @@
-  正在确定要还原的项目…
-  所有项目均是最新的，无法还原。
-  cchud-hook -> D:\Claude DIY\代码\hookshim\cchud-hook-cs\bin\Release\net8.0\win-x64\cchud-hook.dll
-  Generating native code
-  cchud-hook -> D:\Claude DIY\代码\hookshim\cchud-hook-cs\bin\Release\net8.0\win-x64\publish\

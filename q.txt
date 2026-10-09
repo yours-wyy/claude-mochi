@@ -1,5 +1,0 @@
-"command": "\"D:\\Claude DIY\\代码\\hookshim\\cchud-hook-cs\\bin\\Release\\net8.0\\win-x64\\publish\\cchud-hook.exe\"",
-"command": "\"D:\\Claude DIY\\代码\\hookshim\\cchud-hook-cs\\bin\\Release\\net8.0\\win-x64\\publish\\cchud-hook.exe\"",
-"command": "\"D:\\Claude DIY\\代码\\hookshim\\cchud-hook-cs\\bin\\Release\\net8.0\\win-x64\\publish\\cchud-hook.exe\"",
-"command": "\"D:\\Claude DIY\\代码\\hookshim\\cchud-hook-cs\\bin\\Release\\net8.0\\win-x64\\publish\\cchud-hook.exe\"",
-"command": "\"D:\\Claude DIY\\代码\\hookshim\\cchud-hook-cs\\bin\\Release\\net8.0\\win-x64\\publish\\cchud-hook.exe\"",

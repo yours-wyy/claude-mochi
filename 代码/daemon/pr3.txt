@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "D:\Claude DIY\代码\daemon\hud_daemon\protocol.py", line 408, in <module>
-    _selftest()
-  File "D:\Claude DIY\代码\daemon\hud_daemon\protocol.py", line 400, in _selftest
-    assert len(frame) - 3 <= mtu, (mtu, len(frame))
-           ^^^^^^^^^^^^^^^^^^^^^
-AssertionError: (23, 27)

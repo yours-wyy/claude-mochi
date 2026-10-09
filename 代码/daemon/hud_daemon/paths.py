@@ -87,7 +87,7 @@ def stable_dir() -> Path:
 # than admitting the file is not there.
 _FALLBACK = {
     "hookshim": {
-        "exe": "hookshim/cchud-hook-cs/bin/Release/net8.0/win-x64/publish/cchud-hook.exe",
+        "exe": "hookshim/cchud-hook-cs/bin/Release/net10.0/win-x64/publish/cchud-hook.exe",
         "script": "hookshim/cchud_hook.py",
     },
 }

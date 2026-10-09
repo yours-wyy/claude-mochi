@@ -2,16 +2,17 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AssemblyName>cchud-hook</AssemblyName>
     <RootNamespace>CchudHook</RootNamespace>
 
-    <!-- Native AOT: a single native exe with no runtime dependency and
-         single-digit-millisecond startup. The Python shim this replaces costs
-         1.11 ms once running, and that is the bar to beat. -->
-    <PublishAot>true</PublishAot>
+    <!-- Native AOT requires the VS2022 C++ workload (link.exe). On machines
+         without it, fall back to self-contained trimmed JIT: still a single
+         native-free exe with no runtime dependency, just slightly larger and
+         slower to start than an AOT binary. -->
+    <PublishAot>false</PublishAot>
     <SelfContained>true</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
 

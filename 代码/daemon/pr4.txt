@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "D:\Claude DIY\代码\daemon\hud_daemon\protocol.py", line 415, in <module>
-    _selftest()
-  File "D:\Claude DIY\代码\daemon\hud_daemon\protocol.py", line 398, in _selftest
-    assert budget >= 16, (mtu, budget)
-           ^^^^^^^^^^^^
-AssertionError: (23, 9)

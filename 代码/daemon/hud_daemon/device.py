@@ -76,6 +76,13 @@ class DeviceConfig:
                 problems.append(f"{name}={value} outside {lo}..{hi}")
         return problems
 
+    def to_dict(self) -> dict:
+        """Dict of this config for API responses.
+
+        dataclass(slots=True) has no __dict__, so callers must not reach for it.
+        """
+        return asdict(self)
+
 
 def config_path() -> Path:
     return app_dir() / "device.json"

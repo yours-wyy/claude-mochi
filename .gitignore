@@ -20,3 +20,7 @@ electron/mainlog.txt
 # 工作区配置
 .workbuddy/
 .zcode/
+
+# Python 字节码
+__pycache__/
+*.pyc

@@ -414,6 +414,11 @@ export default function Expressions({
   const [ioOpen, setIoOpen] = useState(false);
   const [ioText, setIoText] = useState('');
 
+  // Boot animation.
+  const [bootDir, setBootDir] = useState('');
+  const [bootOpen, setBootOpen] = useState(false);
+  const [bootBusy, setBootBusy] = useState(false);
+
   const problems = useMemo(() => validate(expr), [expr]);
   const bytes = useMemo(() => new TextEncoder().encode(JSON.stringify(expr)).length, [expr]);
   const drift = useMemo(() => builtinDrift(), []);
@@ -541,6 +546,44 @@ export default function Expressions({
     // render here beyond refreshing the slot list.
     if (exprEvent.type === 'expr-selected') {
       refreshSlots();
+      return;
+    }
+
+    // device-config: another client changed the display settings. The daemon
+    // broadcasts the full config after every POST /device/config, so we can
+    // update locally without waiting for a refetch.
+    if (exprEvent.type === 'device-config') {
+      if (typeof exprEvent.brightness === 'number') setDev((prev) => ({
+        ...prev, brightness: exprEvent.brightness!,
+      }));
+      if (typeof exprEvent.speed === 'number') setDev((prev) => ({
+        ...prev, speed: exprEvent.speed!,
+      }));
+      if (typeof exprEvent.rotation === 'number') setDev((prev) => ({
+        ...prev, rotation: exprEvent.rotation!,
+      }));
+      if (typeof exprEvent.idle_s === 'number') setDev((prev) => ({
+        ...prev, idle_s: exprEvent.idle_s!,
+      }));
+      return;
+    }
+
+    // boot-*: boot animation upload progress and results. Surface as a message
+    // so the user knows what happened without watching the log panel.
+    if (exprEvent.type === 'boot-uploaded') {
+      const files = Array.isArray(exprEvent.files)
+        ? exprEvent.files.map((f) => (typeof f === 'string' ? f : f.name))
+        : [];
+      setMsg(`Boot 动画已上传（${files.join(', ')}，${exprEvent.bytes ?? '?'} 字节）`);
+      return;
+    }
+    if (exprEvent.type === 'boot-failed') {
+      setMsg(`Boot 动画上传失败：${exprEvent.error ?? '未知原因'}`);
+      return;
+    }
+    if (exprEvent.type === 'boot-playing') {
+      setMsg('正在播放 boot 动画');
+      return;
     }
   }, [exprEvent, refreshSlots]);
 
@@ -618,6 +661,70 @@ export default function Expressions({
       else if (!body.pushed) setMsg('已保存到本机，但设备当前离线，重连后生效');
     } catch (e) {
       setMsg(`设备设置请求失败：${(e as Error).message}`);
+    }
+  };
+
+  // ── boot animation (E) ──────────────────────────────────────────────────────
+  const uploadBoot = async () => {
+    if (!bootDir.trim()) {
+      setMsg('请先填写 boot 文件目录路径');
+      return;
+    }
+    setBootBusy(true);
+    setMsg('正在上传 boot 动画…');
+    try {
+      const res = await fetch(`${DAEMON}/boot/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dir: bootDir.trim() }),
+      });
+      const body = await res.json();
+      if (!res.ok) {
+        setMsg(`Boot 上传失败：${body.error ?? res.status}`);
+      } else {
+        const files = (body.files ?? []).map((f: { name: string; bytes: number }) =>
+          `${f.name}(${f.bytes}B)`).join(', ');
+        setMsg(`Boot 已上传：${files}`);
+      }
+    } catch (e) {
+      setMsg(`Boot 上传请求失败：${(e as Error).message}`);
+    } finally {
+      setBootBusy(false);
+    }
+  };
+
+  const playBoot = async () => {
+    setMsg('正在播放 boot 动画…');
+    try {
+      const res = await fetch(`${DAEMON}/boot/play`, { method: 'POST' });
+      const body = await res.json();
+      if (!res.ok) {
+        setMsg(`Boot 播放失败：${body.error ?? res.status}`);
+      } else {
+        setMsg('已发送播放指令');
+      }
+    } catch (e) {
+      setMsg(`Boot 播放请求失败：${(e as Error).message}`);
+    }
+  };
+
+  // ── test upload (F) ─────────────────────────────────────────────────────────
+  const runTest = async () => {
+    setBusy(true);
+    setMsg('正在上传测试表情…');
+    try {
+      const res = await fetch(`${DAEMON}/expressions/test`, { method: 'GET' });
+      const body = await res.json();
+      if (!res.ok) {
+        setMsg(`测试上传失败：${body.error ?? res.status}`);
+      } else {
+        setMsg(`测试表情已上传（slot ${body.slot}，绑定到 thinking）`);
+        refreshSlots();
+      }
+    } catch (e) {
+      setMsg(`测试上传请求失败：${(e as Error).message}`);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -1291,6 +1398,34 @@ export default function Expressions({
               </div>
             )}
           </div>
+
+          {/* ── boot animation (E) ── */}
+          <div style={s.devBox}>
+            <button style={s.devHead} onClick={() => setBootOpen((v) => !v)}>
+              <span>Boot 动画</span>
+              <span style={s.devChevron}>{bootOpen ? '▾' : '▸'}</span>
+            </button>
+            {bootOpen && (
+              <div style={s.devBody}>
+                <Row label="文件目录">
+                  <input style={s.textInput} type="text" placeholder="含 meta.json/segs.bin/tris.bin 的目录"
+                         value={bootDir}
+                         onChange={(e) => setBootDir(e.target.value)} />
+                </Row>
+                <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                  <button style={{ ...s.addBtn, flex: 1 }}
+                          disabled={bootBusy} onClick={uploadBoot}>
+                    {bootBusy ? '上传中…' : '上传 Boot'}
+                  </button>
+                  <button style={{ ...s.addBtn, ...s.smallBtnGhost }}
+                          onClick={playBoot}>播放</button>
+                </div>
+                <div style={{ fontSize: 10, color: '#626b7a', marginTop: 6, lineHeight: 1.5 }}>
+                  需要三个文件：meta.json、segs.bin、tris.bin，放在同一个目录下。
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── column 3: library ── */}
@@ -1364,6 +1499,10 @@ export default function Expressions({
         <button style={{ ...s.upload, ...(busy ? s.uploadBusy : null) }}
                 disabled={busy} onClick={onUpload}>
           {busy ? (progress ? `上传中 ${pct}%` : '上传中…') : '上传并绑定'}
+        </button>
+        <button style={{ ...s.addBtn, ...s.smallBtnGhost }}
+                disabled={busy} onClick={runTest} title="上传内置测试表情并绑定到 thinking">
+          测试上传
         </button>
       </div>
       {msg && <div style={s.msg}>{msg}</div>}
@@ -1524,6 +1663,7 @@ const s: Record<string, React.CSSProperties> = {
     background: '#1c212b', color: '#c8cdd6', border: '1px solid #242a35',
     fontFamily: 'var(--mono)', transition: 'all .12s',
   },
+  smallBtnGhost: { background: '#161a21', color: '#9aa3b0', border: '1px solid #242a35' },
   inspector: { display: 'flex', flexDirection: 'column', gap: 6 },
   row: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   rowKey: { fontSize: 11, color: '#9aa3b0', flexShrink: 0 },

@@ -4,8 +4,8 @@
   "python_exe": "C:\\Users\\wyy12\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
 
   "hookshim": {
-    "$note": "Which compiled shim the settings.json hook command points at. 'exe' is the zero-dependency NativeAOT build; 'script' plus python_exe is the debug fallback that needs no rebuild.",
-    "exe": "hookshim/cchud-hook-cs/bin/Release/net8.0/win-x64/publish/cchud-hook.exe",
+    "$note": "Which compiled shim the settings.json hook command points at. 'exe' is the zero-dependency self-contained build; 'script' plus python_exe is the debug fallback that needs no rebuild.",
+    "exe": "hookshim/cchud-hook-cs/bin/Release/net10.0/win-x64/publish/cchud-hook.exe",
     "script": "hookshim/cchud_hook.py"
   },
 

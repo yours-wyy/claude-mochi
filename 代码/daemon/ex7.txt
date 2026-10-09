@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "D:\Claude DIY\代码\daemon\hud_daemon\expressions.py", line 318, in <module>
-    _selftest()
-  File "D:\Claude DIY\代码\daemon\hud_daemon\expressions.py", line 309, in _selftest
-    assert P.chunk_payload_budget(519) > 400
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError

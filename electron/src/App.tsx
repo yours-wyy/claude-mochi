@@ -197,9 +197,31 @@ export default function App() {
           case 'device-log':
             setPushErr(`设备报告：${frame.text ?? ''}`);
             return;
+          case 'link':
+            // The BLE link changed state right now, not on the next 2s poll.
+            // Update the status strip immediately so the dot and pill flip the
+            // instant the device is gone or back.
+            if (typeof frame.state === 'string') {
+              setStatus((prev) => prev
+                ? { ...prev, link: { ...prev.link, state: frame.state as string } }
+                : prev);
+            }
+            return;
+          case 'device-config':
+            // Another client changed the display settings. Forward to the
+            // editor so it can update without a manual refresh.
+            setExprEvent(frame);
+            return;
+          case 'status':
+            // The daemon sends a full status frame on WS connect. Use it to
+            // populate immediately instead of waiting for the first poll tick.
+            if (frame.link && typeof frame.link === 'object') {
+              setStatus((prev) => prev
+                ? { ...prev, ...(frame as unknown as Status) }
+                : (frame as unknown as Status));
+            }
+            return;
           default:
-            // Anything else belongs to the expression editor, which needs the
-            // raw frame to drive its progress bar.
             setExprEvent(frame);
         }
       };

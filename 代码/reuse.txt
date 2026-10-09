@@ -1,6 +1,0 @@
-before: 2 slots -> [0, 2]
-  rebind 'custom' -> slot 2 (thinking)
-
-after: 2 slots -> [0, 2]
-  slot  0  test       346B
-  slot  2  custom     211B

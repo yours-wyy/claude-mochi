@@ -1,6 +1,0 @@
-                                   wait_ack=True, ack_timeout=5.0)
----BEGIN---  
-    EXPR_BEGIN(slot, len, crc16)   declare the blob; device allocates its buffer
-    if not await link.send_frame(P.MSG_EXPR_BEGIN,
-        return UploadResult(ok=False, slot=slot, error="EXPR_BEGIN write failed")
-    # EXPR_BEGIN is slot + u16 len + u16 crc16 = 5 bytes.

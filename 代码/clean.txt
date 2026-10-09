@@ -1,9 +1,0 @@
-before: 5 slots -> [0, 1, 2, 3, 4]
-  delete slot 1  (test): ok
-  delete slot 3  (custom): ok
-  delete slot 4  (custom): ok
-  rebind 'custom' -> slot 2 (thinking)
-
-after: 2 slots -> [0, 2]
-  slot  0  test       346B
-  slot  2  custom     211B

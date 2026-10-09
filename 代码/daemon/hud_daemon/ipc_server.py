@@ -171,7 +171,7 @@ class IpcServer:
 
         @app.get("/device")
         async def device_get() -> JSONResponse:
-            return JSONResponse({"ok": True, "config": self.device_cfg.__dict__,
+            return JSONResponse({"ok": True, "config": self.device_cfg.to_dict(),
                                  "ranges": {
                                      "brightness": [0, 255], "speed": [1, 3],
                                      "rotation": [0, 3], "idle_s": [5, 300]}})
@@ -265,12 +265,12 @@ class IpcServer:
                 self.device_cfg.rotation, self.device_cfg.idle_s)
 
             await self._broadcast({"type": "device-config",
-                                   **self.device_cfg.__dict__})
+                                   **self.device_cfg.to_dict()})
             # A device that is offline will still have the values in NVS from
             # the last successful push, so a failed send is a warning rather
             # than an error — but the UI should know the panel may be stale.
             return JSONResponse({"ok": True, "pushed": pushed,
-                                 "config": self.device_cfg.__dict__})
+                                 "config": self.device_cfg.to_dict()})
 
         # ── expressions ─────────────────────────────────────────
         @app.get("/expressions/item/{expr_id}")

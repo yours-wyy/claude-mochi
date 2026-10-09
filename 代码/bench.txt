@@ -1,8 +1,0 @@
-[*] 8 runs each, whole-process cost
-
-  cchud-hook.exe median   48.8 ms   (min   45.8, max 1042.4)
-  cchud_hook.py  median  695.4 ms   (min  275.8, max 1127.7)
-
-  compiled is 14.2x faster per tool call
-
-[*] with 20 tool calls in one turn that is 12.9 s saved, or none if it is slower.
